@@ -37,7 +37,7 @@ jobs:
 
       # Étape 5 : Scanner l'image Docker avec Trivy
       - name: Scan Docker Image with Trivy
-        uses: aquasecurity/trivy-action@v0.11.1
+        uses: aquasecurity/trivy-action@master
         with:
           image-ref: ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest
 
