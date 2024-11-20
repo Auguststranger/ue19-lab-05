@@ -34,13 +34,13 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: false
           tags: |
-            ghcr.io/${{ github.repository_owner }}/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]'):latest
+            ghcr.io/${{ github.repository_owner }}/{{ github.event.repository.name | toLower }}:latest
 
       # Étape 5 : Scanner l'image Docker avec Trivy
       - name: Scan Docker Image with Trivy
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ghcr.io/${{ github.repository_owner }}/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]'):latest
+          image-ref: ghcr.io/${{ github.repository_owner }}/{{ github.event.repository.name | toLower }}:latest
 
       # Étape 6 : Publier l'image Docker (si le scan réussit)
       - name: Push Docker Image
@@ -51,5 +51,5 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]'):latest
-            ghcr.io/${{ github.repository_owner }}/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]'):${{ github.sha }}
+            ghcr.io/${{ github.repository_owner }}/{{ github.event.repository.name | toLower }}:latest
+            ghcr.io/${{ github.repository_owner }}/{{ github.event.repository.name | toLower }}:${{ github.sha }}
