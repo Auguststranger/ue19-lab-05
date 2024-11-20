@@ -1,4 +1,4 @@
-name: Build and Publish Docker Image
+name: Build, Scan, and Publish Docker Image
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build-and-publish:
+  build-scan-publish:
     runs-on: ubuntu-latest
 
     steps:
@@ -26,8 +26,24 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Étape 4 : Construire et publier l'image Docker
-      - name: Build and Push Docker Image
+      # Étape 4 : Construire l'image Docker
+      - name: Build Docker Image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: false
+          tags: ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest
+
+      # Étape 5 : Scanner l'image Docker avec Trivy
+      - name: Scan Docker Image with Trivy
+        uses: aquasecurity/trivy-action@v0.11.1
+        with:
+          image-ref: ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest
+
+      # Étape 6 : Publier l'image Docker (si le scan réussit)
+      - name: Push Docker Image
+        if: success()  # Publier uniquement si toutes les étapes précédentes réussissent
         uses: docker/build-push-action@v3
         with:
           context: .
